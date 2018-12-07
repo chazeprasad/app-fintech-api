@@ -8,7 +8,7 @@
     "description": "Ant : REST API in TypeScript",
     "main": "index.js",
     "scripts": {
-        "heroku-postbuild": "gulp build && npm seed",
+        "heroku-postbuild": "gulp build && npm run seed",
         "start": "node index.js",
         "dev": "gulp dev && nodemon config ./bin/index.js",
         "build": "gulp dev",
