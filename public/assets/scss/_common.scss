@@ -1,0 +1,78 @@
+@import './settings';
+
+
+
+.ybo-btn{
+    background: #68499d;
+    background: -moz-linear-gradient(-45deg, #68499d 0%, #ce0058 50%, #ce0058 50%, #ed9b33 100%);
+    background: -webkit-linear-gradient(-45deg, #68499d 0%,#ce0058 50%,#ce0058 50%,#ed9b33 100%);
+    background: linear-gradient(135deg, #68499d 0%,#ce0058 50%,#ce0058 50%,#ed9b33 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#68499d', endColorstr='#ed9b33',GradientType=1 );
+    display: inline-block;
+    // float: left;
+    margin: 0;
+    color: #fff;
+    padding: 4px;
+    border: none;
+    border-radius: 2px;
+    
+    text-align: center;
+
+    transition: .4s;
+    position: relative;
+    z-index: 1;
+    opacity: 1 !important;
+    text-transform: uppercase;
+    line-height: 1.4;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 30px;
+    letter-spacing: 1px;
+    text-decoration: none;
+
+    &:hover{
+        color: #ffffff;
+        background: #ce0058;
+    background: -moz-linear-gradient(-45deg, #ed9b33 0%, #ce0058 50%, #ce0058 50%, #68499d 100%);
+    background: -webkit-linear-gradient(-45deg, #ed9b33 0%,#ce0058 50%,#ce0058 50%,#68499d 100%);
+    background: linear-gradient(135deg, #ed9b33 0%,#ce0058 50%,#ce0058 50%,#68499d 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ed9b33', endColorstr='#68499d',GradientType=1 );
+    
+    }
+}
+
+
+
+.content-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+    
+    
+
+    .head{
+        color: #414042;
+        display: inline-flex;
+        font-size: 42px;
+        font-weight: 300;
+        padding: 15px 10px;
+        letter-spacing: 1.4px;
+        margin-top: 6px;
+        margin-bottom: 60px;
+        text-transform: uppercase;
+        // border-bottom: 2px solid #414042;
+        border-bottom: 2px solid #779900;
+        border-bottom: 2px solid #F50057;
+        color: #414042;
+
+        @media(max-width: $ipad){
+            font-size: 21px;
+            padding: 10px 10px;
+            margin-bottom: 20px;
+
+        }
+    }
+
+
+
