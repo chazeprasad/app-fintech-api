@@ -9,7 +9,7 @@
     "main": "index.js",
     "scripts": {
         "heroku-postbuild": "gulp build",
-        "start": "node dist/index.js",
+        "start": "node index.js",
         "dev": "gulp dev && nodemon config ./bin/index.js",
         "build": "gulp dev",
         "test": "jasmine-ts --config=./lab/support/jasmine.json",
