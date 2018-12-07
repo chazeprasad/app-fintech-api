@@ -14,7 +14,7 @@
         "build": "gulp dev",
         "test": "jasmine-ts --config=./lab/support/jasmine.json",
         "lab": "node_modules/nodemon/bin/nodemon.js -w bin ./node_modules/.bin/jasmine --config=./lab/support/jasmine.json",
-        "seed": "DOMAIN=https://yesbyowner.herokuapp.com ts-node ./seed/index"
+        "seed": "ts-node ./seed/index"
     },
     "author": "Prasad Sivanandan",
     "license": "MIT",

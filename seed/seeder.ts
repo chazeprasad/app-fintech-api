@@ -19,6 +19,9 @@ export class Seeder {
         this.imagePath = this.domain + '/file/property';
         this.imageList = [];
 
+        console.log('=== DOMAIN ===')
+        console.log(this.domain)
+
         for(let i:number = 1; i<=10; i++){
             let pList:Array<any> = [];
             for(let j:number = 1; j<= 9; j++){
@@ -38,6 +41,9 @@ export class Seeder {
 
     async initMongoose() {
         const DB_URL = process.env.MONGODB_URI ? process.env.MONGODB_URI : 'mongodb://localhost:27017/yesbyowner_development';
+        
+        console.log('=== DB_URL ===')
+        console.log(DB_URL)
         //use q promises
         global.Promise = require("q").Promise;
         mongoose.Promise = global.Promise;
