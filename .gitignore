@@ -2,6 +2,11 @@
 /tmp
 /out-tsc
 
+# Env
+.env
+/src/.env
+/bin/.env
+
 # dependencies
 /node_modules
 

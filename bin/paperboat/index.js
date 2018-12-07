@@ -103,7 +103,7 @@ class PaperBoat extends core_1.Paper {
         });
     }
     initMongoose() {
-        const DB_URL = process.env.DATABASE_URL ? process.env.DATABASE_URL : 'mongodb://localhost:27017/paperboat';
+        const DB_URL = process.env.MONGODB_URI ? process.env.MONGODB_URI : 'mongodb://localhost:27017/paperboat';
         //use q promises
         global.Promise = require("q").Promise;
         mongoose.Promise = global.Promise;

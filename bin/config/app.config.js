@@ -19,7 +19,7 @@ const envVarsSchema = Joi.object({
     JWT_SECRET: Joi.string()
         .default('1111222233334444')
         .description('JWT Secret required to sign'),
-    DATABASE_URL: Joi.string()
+    MONGODB_URI: Joi.string()
         .default('mongodb://localhost:27017/yesbyowner_development')
         .description('Mongo DB url')
 }).unknown()

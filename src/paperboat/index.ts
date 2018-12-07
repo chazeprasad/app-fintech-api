@@ -143,7 +143,7 @@ export class PaperBoat extends Paper {
 
     private initMongoose() {
 
-        const DB_URL = process.env.DATABASE_URL ? process.env.DATABASE_URL : 'mongodb://localhost:27017/paperboat';
+        const DB_URL = process.env.MONGODB_URI ? process.env.MONGODB_URI : 'mongodb://localhost:27017/paperboat';
 
         //use q promises
         global.Promise = require("q").Promise;
