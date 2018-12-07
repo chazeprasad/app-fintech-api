@@ -8,13 +8,13 @@
     "description": "Ant : REST API in TypeScript",
     "main": "index.js",
     "scripts": {
-        "heroku-postbuild": "gulp build",
+        "heroku-postbuild": "gulp build && npm seed",
         "start": "node index.js",
         "dev": "gulp dev && nodemon config ./bin/index.js",
         "build": "gulp dev",
         "test": "jasmine-ts --config=./lab/support/jasmine.json",
         "lab": "node_modules/nodemon/bin/nodemon.js -w bin ./node_modules/.bin/jasmine --config=./lab/support/jasmine.json",
-        "seed": "ts-node ./seed/index"
+        "seed": "DOMAIN=https://yesbyowner.herokuapp.com ts-node ./seed/index"
     },
     "author": "Prasad Sivanandan",
     "license": "MIT",
