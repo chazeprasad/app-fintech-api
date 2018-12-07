@@ -50,7 +50,7 @@ export class TextMessageController extends ApiController {
         let text = req.body.Text;
         let mid = req.body.MessageUUID;
 
-        let asset:IAssetModel = await Asset.findOne( { _id: text } )
+        let asset:IAssetModel = await Asset.findOne( { houseNo: text } )
 
         let domain = 'https://yesbyowner.herokuapp.com'
         let url = domain + '/asset-view/' + asset._id;
