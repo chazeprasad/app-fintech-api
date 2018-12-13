@@ -16,7 +16,7 @@ export class Seeder {
     }
     init(){
         this.domain = process.env.DOMAIN ||  '';
-        this.imagePath = this.domain + '/file/property';
+        this.imagePath = '/property';
         this.imageList = [];
 
         console.log('=== DOMAIN ===')

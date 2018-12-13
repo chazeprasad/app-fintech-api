@@ -26,13 +26,16 @@ let TextMessageController = TextMessageController_1 = class TextMessageControlle
     }
     test(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            let toNumber = '+919542685141';
+            // let toNumber = '+919542685141'
+            let toNumber = TextMessageController_1.FROM_NUMBER;
             try {
                 var plivo = require('plivo');
                 var client = new plivo.Client(TextMessageController_1.AUTH_ID, TextMessageController_1.AUTH_TOKEN);
-                client.messages.create(TextMessageController_1.FROM_NUMBER, // src
+                client.messages.create(
+                // TextMessageController.FROM_NUMBER, // src
+                '+14195143173', // src
                 toNumber, // dst
-                "Hello, how are you? ").then(function (response) {
+                "4417").then(function (response) {
                     console.log(response);
                     res.json({ content: "OK" });
                 }, function (err) {
@@ -45,28 +48,49 @@ let TextMessageController = TextMessageController_1 = class TextMessageControlle
             }
         });
     }
-    in(req, res, next) {
+    incoming(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            let from = req.body.From;
-            let text = req.body.Text;
-            let mid = req.body.MessageUUID;
-            let asset = yield asset_model_1.Asset.findOne({ _id: text });
-            let domain = 'https://yesbyowner.herokuapp.com';
-            let url = domain + '/asset-view/' + asset._id;
-            let toNumber = from;
             try {
-                var plivo = require('plivo');
-                var client = new plivo.Client(TextMessageController_1.AUTH_ID, TextMessageController_1.AUTH_TOKEN);
-                client.messages.create(TextMessageController_1.FROM_NUMBER, // src
-                toNumber, // dst
-                url // text
-                ).then(function (response) {
-                    console.log(response);
-                    res.json({ content: "OK" });
-                }, function (err) {
-                    console.error(err);
-                    next(err);
-                });
+                console.log(req.body);
+                let from = req.body.From;
+                let text = req.body.Text;
+                let mid = req.body.MessageUUID;
+                console.log(text);
+                console.log(process.env.MONGODB_URI);
+                let asset = yield asset_model_1.Asset.findOne({ houseNo: text });
+                let domain = process.env.DOMAIN || 'http://127.0.0.1:8080';
+                let url;
+                let toNumber = from;
+                let plivo = require('plivo');
+                let client = new plivo.Client(TextMessageController_1.AUTH_ID, TextMessageController_1.AUTH_TOKEN);
+                if (asset) {
+                    console.log(asset);
+                    url = domain + '/#/asset-view/' + asset._id;
+                    client.messages.create(TextMessageController_1.FROM_NUMBER, // src
+                    toNumber, // dst
+                    url // text
+                    ).then(function (response) {
+                        console.log(response);
+                        res.json({ content: "OK" });
+                    }, function (err) {
+                        console.error(err);
+                        next(err);
+                    });
+                }
+                else {
+                    console.log(asset);
+                    url = 'RECORD NOT FOUND';
+                    client.messages.create(TextMessageController_1.FROM_NUMBER, // src
+                    toNumber, // dst
+                    url // text
+                    ).then(function (response) {
+                        console.log(response);
+                        res.json({ content: "OK" });
+                    }, function (err) {
+                        console.error(err);
+                        next(err);
+                    });
+                }
             }
             catch (error) {
                 next(error);
@@ -88,7 +112,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object, Function]),
     __metadata("design:returntype", Promise)
-], TextMessageController.prototype, "in", null);
+], TextMessageController.prototype, "incoming", null);
 TextMessageController = TextMessageController_1 = __decorate([
     api_1.Api({
         path: '/api/text-message',

@@ -7,6 +7,7 @@ const authentication_controller_1 = require("./controller/authentication.control
 const asset_controller_1 = require("./controller/asset.controller");
 const photo_controller_1 = require("./controller/photo.controller");
 const text_message_controller_1 = require("./controller/text-message.controller");
+const seller_controller_1 = require("./controller/seller.controller");
 // import { swaggerConfig } from './config/swagger-config';
 class Application extends paperboat_1.PaperBoat {
     constructor() {
@@ -27,11 +28,13 @@ class Application extends paperboat_1.PaperBoat {
             });
         });
         let userCtrl = new user_controller_1.UserController();
+        let sellerCtrl = new seller_controller_1.SellerController();
         let authCtrl = new authentication_controller_1.AuthenticationController();
         let assetCtrl = new asset_controller_1.AssetController();
         let photoCtrl = new photo_controller_1.PhotoController();
         let textMessageCtrl = new text_message_controller_1.TextMessageController();
         this.express.use('/', userCtrl.router);
+        this.express.use('/', sellerCtrl.router);
         this.express.use('/', authCtrl.router);
         this.express.use('/', assetCtrl.router);
         this.express.use('/', photoCtrl.router);

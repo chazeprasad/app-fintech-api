@@ -52,7 +52,7 @@ export class AssetController extends ApiController {
     @Get('/:id')
     async show(req:Request, res:Response, next:NextFunction) {
         
-        let asset:IAssetModel = await Asset.findOne({_id: req.params.id}).populate('photos').exec();
+        let asset:IAssetModel = await Asset.findOne({_id: req.params.id}).populate('photos owner').exec();
         res.json({
             content: asset
         });

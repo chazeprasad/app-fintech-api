@@ -5,6 +5,7 @@ import { AuthenticationController } from './controller/authentication.controller
 import { AssetController } from './controller/asset.controller';
 import { PhotoController } from './controller/photo.controller';
 import { TextMessageController } from './controller/text-message.controller';
+import { SellerController } from './controller/seller.controller';
 // import { swaggerConfig } from './config/swagger-config';
 
 export class Application extends PaperBoat implements IRoutable {
@@ -30,12 +31,14 @@ export class Application extends PaperBoat implements IRoutable {
         });
 
         let userCtrl = new UserController();
+        let sellerCtrl = new SellerController();
         let authCtrl = new AuthenticationController();
         let assetCtrl = new AssetController();
         let photoCtrl = new PhotoController();
         let textMessageCtrl = new TextMessageController();
         
         this.express.use('/', userCtrl.router);
+        this.express.use('/', sellerCtrl.router);
         this.express.use('/', authCtrl.router);
         this.express.use('/', assetCtrl.router);
         this.express.use('/', photoCtrl.router);

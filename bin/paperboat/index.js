@@ -34,6 +34,8 @@ class PaperBoat extends core_1.Paper {
         if (process.env.NODE_ENV === 'development') {
             this.express.use(logger('dev'));
         }
+        // Public directory
+        this.express.use(express.static(this.staticDir));
         // secure apps by setting various HTTP headers
         this.express.use(helmet());
         // enable CORS - Cross Origin Resource Sharing
@@ -59,8 +61,6 @@ class PaperBoat extends core_1.Paper {
             expressWinston.requestWhitelist.push('body');
             expressWinston.responseWhitelist.push('body');
         }
-        // Public directory
-        this.express.use(express.static(this.staticDir));
     }
     initFileUpload() {
         var DIR = this.rootDir + '/public/file/';

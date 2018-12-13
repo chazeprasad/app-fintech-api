@@ -55,6 +55,9 @@ export class PaperBoat extends Paper {
             this.express.use(logger('dev'));
         }
 
+        // Public directory
+        this.express.use(express.static(this.staticDir))
+
         
         // secure apps by setting various HTTP headers
         this.express.use(helmet());
@@ -91,8 +94,7 @@ export class PaperBoat extends Paper {
             expressWinston.responseWhitelist.push('body');
         }
 
-        // Public directory
-        this.express.use(express.static(this.staticDir))
+        
 
     }
 

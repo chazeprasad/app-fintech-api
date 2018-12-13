@@ -21,15 +21,17 @@ export class TextMessageController extends ApiController {
 
     @Post('/test')
     async test(req:Request, res:Response, next:NextFunction) {
-        let toNumber = '+919542685141'
+        // let toNumber = '+919542685141'
+        let toNumber = TextMessageController.FROM_NUMBER
         try {
 
             var plivo = require('plivo');
             var client = new plivo.Client(TextMessageController.AUTH_ID,TextMessageController.AUTH_TOKEN);
                 client.messages.create(
-                    TextMessageController.FROM_NUMBER, // src
+                    // TextMessageController.FROM_NUMBER, // src
+                    '+14195143173', // src
                     toNumber, // dst
-                    "Hello, how are you? ", // text
+                    "4417", // text
                 ).then(function (response) {
                     console.log(response);
                     res.json({ content: "OK" })
@@ -45,20 +47,26 @@ export class TextMessageController extends ApiController {
        
     }
     @Post('/in')
-    async in(req:Request, res:Response, next:NextFunction) {
-        let from = req.body.From;
-        let text = req.body.Text;
-        let mid = req.body.MessageUUID;
-
-        let asset:IAssetModel = await Asset.findOne( { houseNo: text } )
-
-        let domain = 'https://yesbyowner.herokuapp.com'
-        let url = domain + '/asset-view/' + asset._id;
-        let toNumber = from;
+    async incoming(req:Request, res:Response, next:NextFunction) {
         try {
+            console.log(req.body)
+            let from = req.body.From;
+            let text = req.body.Text;
+            let mid = req.body.MessageUUID;
 
-            var plivo = require('plivo');
-            var client = new plivo.Client(TextMessageController.AUTH_ID,TextMessageController.AUTH_TOKEN);
+            console.log(text)
+            console.log(process.env.MONGODB_URI)
+
+            let asset:IAssetModel = await Asset.findOne({houseNo: text});
+            let domain = process.env.DOMAIN || 'http://127.0.0.1:8080'
+            let url;
+            let toNumber = from;
+            let plivo = require('plivo');
+            let client = new plivo.Client(TextMessageController.AUTH_ID,TextMessageController.AUTH_TOKEN);
+
+            if(asset){
+                console.log(asset)
+                url = domain + '/#/asset-view/' + asset._id;
                 client.messages.create(
                     TextMessageController.FROM_NUMBER, // src
                     toNumber, // dst
@@ -70,11 +78,24 @@ export class TextMessageController extends ApiController {
                     console.error(err);
                     next(err)
                 });
-            
-            
-        } catch (error) {
-            next(error);
-        }
+            } else {
+                console.log(asset)
+                url = 'RECORD NOT FOUND';
+                client.messages.create(
+                    TextMessageController.FROM_NUMBER, // src
+                    toNumber, // dst
+                    url // text
+                ).then(function (response) {
+                    console.log(response);
+                    res.json({ content: "OK" })
+                }, function (err) {
+                    console.error(err);
+                    next(err)
+                });
+            }
+    } catch (error) {
+        next(error);
+    }
        
     }
 

@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
+const path = require("path");
+let url = path.resolve(process.cwd(), '.env');
 // require and configure dotenv, will load vars in .env in PROCESS.ENV
 require('dotenv').config();
 // define validation for all the env vars

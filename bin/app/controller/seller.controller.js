@@ -18,19 +18,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const api_1 = require("../../paperboat/core/api");
-const asset_model_1 = require("../model/asset.model");
+const user_model_1 = require("../model/user.model");
+const error_1 = require("../util/error");
+const message_1 = require("../util/message");
+const authenticate_user_1 = require("../auth/authenticate-user");
 const status_1 = require("../util/status");
 const policy_1 = require("../util/policy");
-let AssetController = class AssetController extends api_1.ApiController {
+let SellerController = class SellerController extends api_1.ApiController {
     constructor() {
         super();
     }
     create(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let asset = yield asset_model_1.Asset.create(req.body);
+                let exist = yield user_model_1.User.findOne({ username: req.body.username });
+                if (exist) {
+                    throw new error_1.AccountExistError();
+                }
+                let user = yield user_model_1.User.create(req.body);
+                let token = yield new authenticate_user_1.AuthenticateUser(req.body.username, req.body.password).execute();
                 res.status(status_1.Status.CREATED).json({
-                    content: asset
+                    token: token,
+                    message: message_1.Message.ACCOUNT_CREATED
                 });
             }
             catch (error) {
@@ -40,30 +49,42 @@ let AssetController = class AssetController extends api_1.ApiController {
     }
     index(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            let assets = yield asset_model_1.Asset.find().exec();
+            let users = yield user_model_1.User.find({ role: 1 }).select('-password').exec();
             res.json({
-                content: assets
+                content: users
             });
         });
     }
     show(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            let asset = yield asset_model_1.Asset.findOne({ _id: req.params.id }).populate('photos owner').exec();
-            res.json({
-                content: asset
-            });
+            try {
+                let user;
+                user = yield user_model_1.User.findOne({ _id: req.params.id, role: 1 }).select('-password').populate({
+                    path: 'assets',
+                    model: 'Asset',
+                    populate: [
+                        { path: 'photos', model: 'Photo' }
+                    ]
+                }).exec();
+                res.json({
+                    content: user
+                });
+            }
+            catch (error) {
+                next(error);
+            }
         });
     }
     update(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            let assetParams = req.body;
-            yield req.context.item.updateOne(assetParams);
+            let userParams = req.body;
+            yield req.context.item.updateOne(userParams);
             res.sendStatus(status_1.Status.NO_CONTENT);
         });
     }
     destroy(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            let assetParams = req.body;
+            let userParams = req.body;
             yield req.context.item.remove();
             res.sendStatus(status_1.Status.NO_CONTENT);
         });
@@ -74,40 +95,39 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object, Function]),
     __metadata("design:returntype", Promise)
-], AssetController.prototype, "create", null);
+], SellerController.prototype, "create", null);
 __decorate([
     api_1.Get('/'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object, Function]),
     __metadata("design:returntype", Promise)
-], AssetController.prototype, "index", null);
+], SellerController.prototype, "index", null);
 __decorate([
     api_1.Get('/:id'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object, Function]),
     __metadata("design:returntype", Promise)
-], AssetController.prototype, "show", null);
+], SellerController.prototype, "show", null);
 __decorate([
     api_1.Put('/:id'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object, Function]),
     __metadata("design:returntype", Promise)
-], AssetController.prototype, "update", null);
+], SellerController.prototype, "update", null);
 __decorate([
     api_1.Delete('/:id'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object, Function]),
     __metadata("design:returntype", Promise)
-], AssetController.prototype, "destroy", null);
-AssetController = __decorate([
+], SellerController.prototype, "destroy", null);
+SellerController = __decorate([
     api_1.Api({
-        path: '/api/asset',
+        path: '/api/seller',
         policies: [
-            { use: policy_1.authoriseRequest, only: ['create', 'update', 'destroy'] },
-            { use: policy_1.validateAsset, only: ['create'] },
-            { use: policy_1.setAsset, only: ['show', 'update', 'destroy'] }
+            // { use: authoriseRequest, except:['create'] },
+            { use: policy_1.validateUser, only: ['create'] },
         ]
     }),
     __metadata("design:paramtypes", [])
-], AssetController);
-exports.AssetController = AssetController;
+], SellerController);
+exports.SellerController = SellerController;
