@@ -5,16 +5,13 @@ import { User, IUserModel } from "../model/user.model";
 import { AccountExistError } from "../util/error";
 import { Status } from "../util/status";
 import { Message } from "../util/message";
-import { validateUser, validateLoginPayload } from "../util/policy";
+import { authoriseRequest } from "../util/policy";
+
 
 
 @Api({
     path: '/auth',
-    policies: [
-        { use: validateLoginPayload, only:['login'] },
-        { use: validateUser, only:['signup'] }
-
-    ] 
+    policies: [ ] 
 })
 export class AuthenticationController extends ApiController {
 
@@ -25,6 +22,7 @@ export class AuthenticationController extends ApiController {
     @Post('/login')
     async login(req:Request, res:Response, next:NextFunction) {
         try {
+            console.log(req.body)
             const token = await new AuthenticateUser(req.body.username, req.body.password).execute();
             const user = await User.findOne({email:req.body.username}).select('-password').exec()
             res.json({token: token, user: user});

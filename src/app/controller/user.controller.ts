@@ -6,24 +6,20 @@ import { Message } from '../util/message';
 import { ApiError } from '../../paperboat/core/error';
 import { AuthenticateUser } from '../auth/authenticate-user';
 import { Status } from '../util/status';
-import { authoriseRequest, validateUser, setUser } from '../util/policy';
+import { authoriseRequest } from '../util/policy';
 
 
 @Api({ 
     path: '/api/user', 
     policies: [
         { use: authoriseRequest, except:['create'] },
-        { use: validateUser, only:['create'] },
-        { use: setUser, only:['show', 'update', 'destroy'] }
     ] 
 })
 export class UserController extends ApiController {
     public router;
 
-
     constructor() {
         super();
-        
     }
 
     @Post('/')
@@ -47,17 +43,7 @@ export class UserController extends ApiController {
         }
        
     }
-
-    @Get('/')
-    async index(req:Request, res:Response, next:NextFunction) {
-        let users: Array<IUserModel> = await User.find().select('-password').exec();
-
-        res.json({
-            content: users
-        });
-
-    }
-
+   
     @Get('/:id')
     async show(req:Request, res:Response, next:NextFunction) {
         
@@ -66,17 +52,4 @@ export class UserController extends ApiController {
         });
     }
 
-    @Put('/:id')
-    async update(req:Request, res:Response, next:NextFunction) {
-        let userParams = req.body
-        await req.context.item.updateOne(userParams)
-        res.sendStatus(Status.NO_CONTENT);
-    }
-
-    @Delete('/:id')
-    async destroy(req:Request, res:Response, next:NextFunction) {
-        let userParams = req.body
-        await req.context.item.remove()
-        res.sendStatus(Status.NO_CONTENT);
-    }
 }

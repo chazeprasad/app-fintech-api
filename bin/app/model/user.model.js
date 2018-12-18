@@ -11,28 +11,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const bcrypt = require("bcrypt");
 var UserSchema = new mongoose_1.Schema({
-    isActive: { type: Boolean, default: false },
     username: String,
     firstName: String,
     lastName: String,
     password: String,
     email: String,
-    phone: String,
-    homePhone: String,
-    address: String,
-    city: String,
-    state: String,
-    zip: Number,
-    role: { type: Number, default: 1 },
-    assets: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'Asset' }]
+    role: { type: String, default: 1 },
 }, { timestamps: { createdAt: true }, strict: true });
 exports.UserSchema = UserSchema;
-// }, { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } });
 var self = UserSchema;
 UserSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         let doc = this;
         try {
+            // only hash the password if it has been modified (or is new)
+            if (!doc.isModified('password')) {
+                return next();
+            }
             var salt = bcrypt.genSaltSync(10);
             var hash = bcrypt.hashSync(doc.password, salt);
             doc.password = hash;

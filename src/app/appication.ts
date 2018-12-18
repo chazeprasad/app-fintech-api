@@ -1,12 +1,12 @@
 import { PaperBoat, IRoutable} from '../paperboat'
 import { UserController } from './controller/user.controller';
+import { BankController } from './controller/bank.controller';
+import { AccountController } from './controller/account.controller';
+import { PaymentController } from './controller/payment.controller';
+import { ActivityController } from './controller/activity.controller';
 import * as express from 'express';
 import { AuthenticationController } from './controller/authentication.controller';
-import { AssetController } from './controller/asset.controller';
-import { PhotoController } from './controller/photo.controller';
-import { TextMessageController } from './controller/text-message.controller';
-import { SellerController } from './controller/seller.controller';
-// import { swaggerConfig } from './config/swagger-config';
+
 
 export class Application extends PaperBoat implements IRoutable {
     constructor() {
@@ -31,19 +31,18 @@ export class Application extends PaperBoat implements IRoutable {
         });
 
         let userCtrl = new UserController();
-        let sellerCtrl = new SellerController();
         let authCtrl = new AuthenticationController();
-        let assetCtrl = new AssetController();
-        let photoCtrl = new PhotoController();
-        let textMessageCtrl = new TextMessageController();
+        let bankCtrl = new BankController();
+        let accountCtrl = new AccountController();
+        let paymentCtrl = new PaymentController();
+        let activitytCtrl = new ActivityController();
         
         this.express.use('/', userCtrl.router);
-        this.express.use('/', sellerCtrl.router);
         this.express.use('/', authCtrl.router);
-        this.express.use('/', assetCtrl.router);
-        this.express.use('/', photoCtrl.router);
-        this.express.use('/', textMessageCtrl.router);
-
+        this.express.use('/', bankCtrl.router);
+        this.express.use('/', accountCtrl.router);
+        this.express.use('/', paymentCtrl.router);
+        this.express.use('/', activitytCtrl.router);
         this.express.use('/', router);
     }
 

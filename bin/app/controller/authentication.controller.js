@@ -23,7 +23,6 @@ const user_model_1 = require("../model/user.model");
 const error_1 = require("../util/error");
 const status_1 = require("../util/status");
 const message_1 = require("../util/message");
-const policy_1 = require("../util/policy");
 let AuthenticationController = class AuthenticationController extends api_1.ApiController {
     constructor() {
         super();
@@ -31,6 +30,7 @@ let AuthenticationController = class AuthenticationController extends api_1.ApiC
     login(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log(req.body);
                 const token = yield new authenticate_user_1.AuthenticateUser(req.body.username, req.body.password).execute();
                 const user = yield user_model_1.User.findOne({ email: req.body.username }).select('-password').exec();
                 res.json({ token: token, user: user });
@@ -77,10 +77,7 @@ __decorate([
 AuthenticationController = __decorate([
     api_1.Api({
         path: '/auth',
-        policies: [
-            { use: policy_1.validateLoginPayload, only: ['login'] },
-            { use: policy_1.validateUser, only: ['signup'] }
-        ]
+        policies: []
     }),
     __metadata("design:paramtypes", [])
 ], AuthenticationController);

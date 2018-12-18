@@ -18,28 +18,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const api_1 = require("../../paperboat/core/api");
-const user_model_1 = require("../model/user.model");
-const error_1 = require("../util/error");
-const message_1 = require("../util/message");
-const authenticate_user_1 = require("../auth/authenticate-user");
 const status_1 = require("../util/status");
 const policy_1 = require("../util/policy");
-let UserController = class UserController extends api_1.ApiController {
+const bank_model_1 = require("../model/bank.model");
+let BankController = class BankController extends api_1.ApiController {
     constructor() {
         super();
     }
     create(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let exist = yield user_model_1.User.findOne({ username: req.body.username });
-                if (exist) {
-                    throw new error_1.AccountExistError();
-                }
-                let user = yield user_model_1.User.create(req.body);
-                let token = yield new authenticate_user_1.AuthenticateUser(req.body.username, req.body.password).execute();
+                let bank = yield bank_model_1.Bank.create(req.body);
                 res.status(status_1.Status.CREATED).json({
-                    token: token,
-                    message: message_1.Message.ACCOUNT_CREATED
+                    content: bank
                 });
             }
             catch (error) {
@@ -47,11 +38,34 @@ let UserController = class UserController extends api_1.ApiController {
             }
         });
     }
+    index(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let banks = yield bank_model_1.Bank.find().exec();
+            res.json({
+                content: banks
+            });
+        });
+    }
     show(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
+            let bank = yield bank_model_1.Bank.findOne({ _id: req.params.id }).exec();
             res.json({
-                content: req.context.item
+                content: bank
             });
+        });
+    }
+    update(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let bankParams = req.body;
+            yield req.context.item.updateOne(bankParams);
+            res.sendStatus(status_1.Status.NO_CONTENT);
+        });
+    }
+    destroy(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let bankParams = req.body;
+            yield req.context.item.remove();
+            res.sendStatus(status_1.Status.NO_CONTENT);
         });
     }
 };
@@ -60,20 +74,38 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object, Function]),
     __metadata("design:returntype", Promise)
-], UserController.prototype, "create", null);
+], BankController.prototype, "create", null);
+__decorate([
+    api_1.Get('/'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, Function]),
+    __metadata("design:returntype", Promise)
+], BankController.prototype, "index", null);
 __decorate([
     api_1.Get('/:id'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object, Function]),
     __metadata("design:returntype", Promise)
-], UserController.prototype, "show", null);
-UserController = __decorate([
+], BankController.prototype, "show", null);
+__decorate([
+    api_1.Put('/:id'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, Function]),
+    __metadata("design:returntype", Promise)
+], BankController.prototype, "update", null);
+__decorate([
+    api_1.Delete('/:id'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, Function]),
+    __metadata("design:returntype", Promise)
+], BankController.prototype, "destroy", null);
+BankController = __decorate([
     api_1.Api({
-        path: '/api/user',
+        path: '/api/bank',
         policies: [
-            { use: policy_1.authoriseRequest, except: ['create'] },
+            { use: policy_1.authoriseRequest, only: ['create', 'index', 'show', 'update', 'destroy'] }
         ]
     }),
     __metadata("design:paramtypes", [])
-], UserController);
-exports.UserController = UserController;
+], BankController);
+exports.BankController = BankController;

@@ -22,7 +22,7 @@ const envVarsSchema = Joi.object({
         .default('1111222233334444')
         .description('JWT Secret required to sign'),
     MONGODB_URI: Joi.string()
-        .default('mongodb://localhost:27017/yesbyowner_development')
+        .default('mongodb://localhost:27017/fintech_development')
         .description('Mongo DB url')
 }).unknown()
     .required();

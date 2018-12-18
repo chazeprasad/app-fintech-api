@@ -38,7 +38,11 @@ class AuthenticateUser {
     authenticate(user) {
         return __awaiter(this, void 0, void 0, function* () {
             if (user) {
-                let match = bcrypt.compareSync(this.password, user.password);
+                let match = yield bcrypt.compare(this.password, user.password);
+                console.log('match');
+                console.log(match);
+                console.log(this.password);
+                console.log(user.password);
                 if (match) {
                     return true;
                 }

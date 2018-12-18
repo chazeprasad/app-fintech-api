@@ -2,8 +2,11 @@ import mongoose = require("mongoose");
 import * as Faker from 'faker'
 
 import { IUserModel, IUser, User } from '../src/app/model/user.model';
-import { IAsset, IAssetModel, Asset } from '../src/app/model/asset.model';
-import { IPhoto, Photo, IPhotoModel } from '../src/app/model/photo.model';
+import { IBank, IBankModel, Bank } from '../src/app/model/bank.model';
+import { IAccount, IAccountModel, Account } from '../src/app/model/account.model';
+import { IActivity, IActivityModel, Activity } from '../src/app/model/activity.model';
+import { IPayment, IPaymentModel, Payment } from '../src/app/model/payment.model';
+
 
 export class Seeder {
 
@@ -16,32 +19,11 @@ export class Seeder {
     }
     init(){
         this.domain = process.env.DOMAIN ||  '';
-        this.imagePath = '/property';
-        this.imageList = [];
-
-        console.log('=== DOMAIN ===')
-        console.log(this.domain)
-
-        for(let i:number = 1; i<=10; i++){
-            let pList:Array<any> = [];
-            for(let j:number = 1; j<= 9; j++){
-                let url = this.imagePath + '/' + 'p' + i.toString() + '-0' + j.toString() + '.jpg';
-                pList.push({
-                    url: url,
-                    uthumbnailUrll: url,
-                    originalUrl: url,
-                    altText: '',
-                    title: '',
-                })
-            }
-            this.imageList.push(pList)
-        }
         this.initMongoose()
     }
 
     async initMongoose() {
-        const DB_URL = process.env.MONGODB_URI ? process.env.MONGODB_URI : 'mongodb://localhost:27017/yesbyowner_development';
-        
+        const DB_URL = process.env.MONGODB_URI ? process.env.MONGODB_URI : 'mongodb://localhost:27017/fintech_development';
         console.log('=== DB_URL ===')
         console.log(DB_URL)
         //use q promises
@@ -61,120 +43,80 @@ export class Seeder {
         await mongoose.connection.db.dropDatabase();
     }
 
-    async createAdmin(){
-        let payload:IUser = {}
-        payload.role = 2
-        payload.password = 'allowme'
-        payload.firstName = 'Prasad'
-        payload.lastName = 'Sivanandan'
-        payload.email = 'chazeprasad@gmail.com';
-        payload.username = payload.email
-        payload.isActive = true
-        payload.phone = '+919542685141'
-        payload.homePhone = '+919542685141'
-        payload.address = Faker.address.streetAddress()
-        payload.city = Faker.address.city()
-        payload.state = Faker.address.state()
-        payload.zip = parseInt(Faker.address.zipCode())
-
-       let prasad = await  User.create(payload)
-
-        payload = {}
-        payload.role = 2
-        payload.password = 'allowme'
-        payload.firstName = 'Dave'
-        payload.lastName = 'Bonitati'
-        payload.email = 'dbonitati@gmail.com';
-        payload.username = payload.email
-        payload.isActive = true
-        payload.phone = '+919542685141'
-        payload.homePhone = '+919542685141'
-        payload.address = Faker.address.streetAddress()
-        payload.city = Faker.address.city()
-        payload.state = Faker.address.state()
-        payload.zip = parseInt(Faker.address.zipCode())
-
-        let dave = await User.create(payload)
-    }
-
      async createUser(){
         let payload:IUser = {}
+        payload.role = 1
         payload.password = 'allowme'
-        payload.firstName = Faker.name.firstName()
-        payload.lastName = Faker.name.firstName()
-        payload.email = Faker.internet.email(payload.firstName, payload.lastName,'xyc');
+        payload.firstName = 'Prasad'
+        payload.lastName = 'Sivanadan'
+        payload.email = 'prasad@abc.com';
         payload.username = payload.email
-        payload.isActive = true
-        payload.phone = '+919542685141'
-        payload.homePhone = '+919542685141'
-        payload.address = Faker.address.streetAddress()
-        payload.city = Faker.address.city()
-        payload.state = Faker.address.state()
-        payload.zip = parseInt(Faker.address.zipCode())
         
         let user:IUserModel = await User.create(payload)
 
-        await this.createAsset(user)
+        await this.createBanks(user, 10)
 
         return user;
     }
-    async createAsset(owner:IUserModel){
-        let payload:IAsset = {}
-        payload.owner = owner._id;
-        payload.isActive = true;
-        payload.description = Faker.lorem.paragraph(5);
-        payload.houseNo = Faker.random.number({min:1111, max:99999}).toString();
-        payload.address = Faker.address.streetAddress();
-        payload.city = "Toledo"
-        payload.state = "OH"
-        payload.zip = Faker.random.number({min:43601, max:43699});
-        payload.lat = parseFloat(Faker.address.latitude());
-        payload.lng = parseFloat(Faker.address.longitude());
-        payload.numBedrooms = Faker.random.number({min:2, max:5});
-        payload.numBathrooms = 2;
-        payload.yearBuilt = Faker.random.number({min:1980, max:2017})
-        payload.squareFootage = Faker.random.number({min:1200, max:4100})
-        payload.occupancyStatus = 'Ready to move';
-        payload.lotSize = 0.26;
-        payload.exteriorDetails = Faker.lorem.paragraph(2);
-        payload.foundationDetails = Faker.lorem.paragraph(2);
-        payload.roofDetails = Faker.lorem.paragraph(2);
-        payload.lotDetails = Faker.lorem.paragraph(2);
-        payload.garageDetails = Faker.lorem.paragraph(2);
-        payload.parkingDetails = Faker.lorem.paragraph(2);
+    async createBanks(user:IUserModel, count=10) {
 
-        let asset:IAssetModel = await Asset.create(payload);
-        owner.assets.push(asset._id);
-        await owner.save();
+        let payload:IBank;
+        let bank:IBankModel
 
-        await this.createPhoto(asset);
+        for(let i=0; i < count; i++){
+            payload = {}
+            payload.bankName = Faker.company.companyName() + ' BANK';
+            bank = await Bank.create(payload)
+          
+            await this.createAccounts(bank, user)
+        }
 
-        return asset;
     }
 
-    async createPhoto(asset:IAssetModel){
-        let n = this.randomRange(1,9) - 1;
-        let list = this.imageList[n];
-        for(let i:number=0; i<9; i++){
-            let payload:IPhoto = list[i];
-            payload.asset = asset._id;
-            let photo:IPhotoModel = await Photo.create(payload)
-            asset.photos.push(photo._id)
-            await asset.save();
+    async createAccounts(bank:IBankModel, user:IUserModel) {
+        let count:number = this.randomRange(2,6);
+        let payload:IAccount;
+        let account:IAccountModel
+        let currecyCodes = ['EUR', 'USD', 'GBP']
+
+        for(let i=0; i < count; i++){
+            payload = {}
+            payload.bank = bank._id
+            payload.user = user._id
+            payload.accountNo = Faker.finance.account();
+            payload.balance = this.randomRange(10000, 110000);
+            payload.currency = currecyCodes[this.randomRange(1,3)-1]
+
+            account = await Account.create(payload);
+
+            bank.accounts.push(account);
+            await bank.save()
+
         }
     }
+
 
     async seed(){
-        await this.createAdmin();
-        const userCount:number = 20;
-        for( let i:number = 0; i< userCount; i++) {
-            await this.createUser();
-        }
+        await this.createUser();
     }
     randomRange(min,max): number // min and max included
     {
         return Math.floor(Math.random()*(max-min+1)+min);
     }
+    shuffle(list) {
+        var input = list;
+         
+        for (var i = input.length-1; i >=0; i--) {
+         
+            var randomIndex = Math.floor(Math.random()*(i+1)); 
+            var itemAtIndex = input[randomIndex]; 
+             
+            input[randomIndex] = input[i]; 
+            input[i] = itemAtIndex;
+        }
+        return input;
+    }
+    
 
 }
 

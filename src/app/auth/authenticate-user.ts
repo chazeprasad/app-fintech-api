@@ -29,8 +29,14 @@ export class AuthenticateUser {
         return user;  
     }
     private async authenticate(user:any) {
+       
         if(user) {
-            let match = bcrypt.compareSync(this.password, user.password);
+            let match = await bcrypt.compare(this.password, user.password);
+            console.log('match')
+            console.log(match)
+            console.log(this.password)
+            console.log(user.password)
+
             if (match) {
                 return true
             } else {
